@@ -6,17 +6,15 @@ func _ready() -> void: #initialization
 	tileObject = $TileMapLayer  #this is for visualization, this doesn't need to exist
 	var tiles = tileObject.tileArray()  #this can be any array of coords
 	
-	var paths = pathfind(tiles) #returns path as [hex coords, axial coords] uses even q coords
-	runDebugLine(paths[1]) #pass axial coords
+	var path = pathfind(tiles, tiles[0],tiles[1]) #returns path as [hex coords, axial coords] uses even q coords
+	if path.size() > 0:
+		runDebugLine(path[1]) #pass axial coords
 
 #hex to axial coord converter
 #Vector2(coord.x * 0.75, (coord.y - (coord.x + 1 if (int(coord.y) % 1) else 0) / 2) + (0.5 if (int(coord.x) % 2 == 1) else 0))
 
-func pathfind(coords): #expects an array of coords with indexes 0 = start 1 = ends
+func pathfind(coords, start, end): #expects an array of coords with indexes 0 = start 1 = ends
 	var pathFound = false
-	
-	var start = coords[0]  #first coord is start
-	var end = coords[1]  #second coord is end
 	var axialEnd = Vector2(end.x * 0.75, (end.y - (end.x + 1 if (int(end.y) % 1) else 0) / 2) + (0.5 if (int(end.x) % 2 == 1) else 0.0))
 	
 	var queuedCoords = []
@@ -26,6 +24,8 @@ func pathfind(coords): #expects an array of coords with indexes 0 = start 1 = en
 	while !pathFound:
 		if (generateSuccessor(queuedCoords[0], coords, end, axialEnd, queuedCoords, completeCoords)):
 			pathFound = true
+		elif queuedCoords.size() == 0:
+			return []
 	
 	#for Coords in queuedCoords:  #debugging
 	#	print(Coords.factor)
