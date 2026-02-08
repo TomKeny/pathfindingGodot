@@ -13,14 +13,14 @@ func _ready() -> void: #initialization
 #hex to axial coord converter
 #Vector2(coord.x * 0.75, (coord.y - (coord.x + 1 if (int(coord.y) % 1) else 0) / 2) + (0.5 if (int(coord.x) % 2 == 1) else 0))
 
-func pathfind(coords, start, end): #expects an array of coords with indexes 0 = start 1 = ends
+func pathfind(coords, start, end): #expects an array of coords, a start coord and an end coord
 	var pathFound = false
 	var axialEnd = Vector2(end.x * 0.75, (end.y - (end.x + 1 if (int(end.y) % 1) else 0) / 2) + (0.5 if (int(end.x) % 2 == 1) else 0.0))
 	
 	var queuedCoords = []
 	var completeCoords = []
 	
-	queuedCoords.append(Coordinate.new(start,0,0,0,Vector2(-1,-1))) #[coord, cost, distance from target, sum of previous 2, parent coord]
+	queuedCoords.append(Coordinate.new(start,0,0,0,Vector2(0.5,0.5))) #[coord, cost, distance from target, sum of previous 2, parent coord]
 	while !pathFound:
 		if (generateSuccessor(queuedCoords[0], coords, end, axialEnd, queuedCoords, completeCoords)):
 			pathFound = true
@@ -83,7 +83,7 @@ func customSort(a,b):  #custom sort to compare only factor
 func pathArray(completeCoords): #runs through completed coord making a path
 	var currentCoord = completeCoords[completeCoords.size() - 1]
 	var path = []
-	while currentCoord.parentCoord != Vector2(-1,-1):
+	while currentCoord.parentCoord != Vector2(0.5,0.5): #existing coords are integers so this can be used to uniquely identify the start
 		#print(currentCoord.coord)
 		path.append(currentCoord.coord)
 		for coordObject in completeCoords:
@@ -110,11 +110,11 @@ class Coordinate: #data storage for each coordinate being processed
 		factor = Factor
 		parentCoord = ParentCoord
 
-func runDebugLine(axialCoords): #creates a debug line to show the path/points produced
+func runDebugLine(Coords): #creates a debug line to show the path/points produced
 	var debugLine = Line2D.new()
 	debugLine.default_color = Color(0.0, 0.0, 0.0, 1.0)
 	debugLine.scale = Vector2(64,64)
 	debugLine.position += Vector2(32,32)
 	debugLine.width = 0.2
 	get_tree().current_scene.add_child(debugLine)
-	debugLine.points = PackedVector2Array(axialCoords)
+	debugLine.points = PackedVector2Array(Coords)

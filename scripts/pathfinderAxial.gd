@@ -16,7 +16,7 @@ func pathfind(coords, start, end): #expects an array of coords with indexes 0 = 
 	var queuedCoords = []
 	var completeCoords = []
 	
-	queuedCoords.append(Coordinate.new(start,0,0,0,Vector2(-1,-1))) #[coord, cost, distance from target, sum of previous 2, parent coord]
+	queuedCoords.append(Coordinate.new(start,0,0,0,Vector2(0.5,0.5))) #[coord, cost, distance from target, sum of previous 2, parent coord]
 	while !pathFound:
 		if (generateSuccessor(queuedCoords[0], coords, end, queuedCoords, completeCoords)):
 			pathFound = true
@@ -70,7 +70,7 @@ func customSort(a,b):  #custom sort to compare only factor
 func pathArray(completeCoords): #runs through completed coord making a path tracing parent coords upwards
 	var currentCoord = completeCoords[completeCoords.size() - 1] #starts from top of array / end point
 	var path = []
-	while currentCoord.parentCoord != Vector2(-1,-1): #runs through path until it reaches the start
+	while currentCoord.parentCoord != Vector2(0.5,0.5): #runs through path until it reaches the start, set to 0.5 as only whole numbers should be passed in, making this a unique identifier
 		#print(currentCoord.coord)
 		path.append(currentCoord.coord)
 		for coordObject in completeCoords: #updates current coord to it's parent's coord object
